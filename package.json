@@ -8,6 +8,7 @@
   },
   "author": "",
   "license": "BSD-2-Clause",
+  "bin": { "termcaster": "./termcaster.js" },
   "dependencies": {
     "pty.js": "~0.2.3",
     "ws": "~0.4.31",
