@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 var request = require('request'),
     server = process.env.TERMCASTER_SERVER || 'localhost:8080',
     pty = require('pty.js'),
