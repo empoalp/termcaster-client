@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
-var request = require('request'),
+var getent = require('getent'),
+    request = require('request'),
     server = process.env.TERMCASTER_SERVER || 'localhost:8080',
     pty = require('pty.js'),
     WebSocket = require('ws');
@@ -8,18 +9,20 @@ var request = require('request'),
 process.stdin.setRawMode(true);
 process.stdin.unpipe();
 
-request('http://' + server + '/newsession', function(error, respose, body) {
-    console.log('Termcasting started');
-    console.log('Client url: http://' + server + '/#' + body);
-    StartCasting(body);
-});
+getent.passwd(process.env.LOGNAME, function(user) { 
+    request('http://' + server + '/newsession', function(error, respose, body) {
+        console.log('Termcasting started');
+        console.log('Client url: http://' + server + '/#' + body);
+        StartCasting(body, user.shell);
+    });
+})
 
-function StartCasting(session_id) {
+function StartCasting(session_id, shell_command) {
     var url = 'ws://' + server + '/streamer/' + session_id,
         ws = new WebSocket(url);
 
     ws.on('open', function() {
-        var term = pty.spawn('zsh', [], {
+        var term = pty.spawn(shell_command, [], {
             cols: process.stdout.columns,
             rows: process.stdout.rows,
             cwd: process.env.HOME,
