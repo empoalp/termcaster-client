@@ -9,6 +9,10 @@
   "author": "",
   "license": "BSD-2-Clause",
   "bin": { "termcaster": "./termcaster.js" },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/empoalp/termcaster-client.git"
+  },
   "dependencies": {
     "pty.js": "~0.2.3",
     "ws": "~0.4.31",
