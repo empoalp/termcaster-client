@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 
-var getent = require('getent'),
+var inquirer = require('inquirer'),
+    getent = require('getent'),
     request = require('request'),
     server = process.env.TERMCASTER_SERVER || 'localhost:8080',
     pty = require('pty.js'),
+    paused = true,
     WebSocket = require('ws');
 
 process.stdin.setRawMode(true);
@@ -29,6 +31,8 @@ function StartCasting(session_id, shell_command) {
             env: process.env
         });
 
+        paused = false;
+
         process.stdout.on('resize', function() {
             term.resize(process.stdout.columns, process.stdout.rows);
         });
@@ -47,7 +51,42 @@ function StartCasting(session_id, shell_command) {
 
         term.socket.setEncoding = 'utf-8';
         term.socket.pipe(process.stdout);
-        process.stdin.pipe(term.socket);
+        //process.stdin.pipe(term.socket);
+        process.stdin.on('data', function(data) {
+            if (data[0] === 4) {
+                if (paused) {
+                    process.exit();
+                } else {
+                    //term.pause();
+                    paused = true;
+                    console.log('');
+                    inquirer.prompt({
+                        name: 'opt',
+                        message: 'Termcaster Menu',
+                        type: 'list',
+                        choices: ['Continue', 'Viewers', 'Exit']
+                    }, function(data) {
+                        if (data.opt === 'Continue') {
+                            //term.resume(); 
+                            paused = false;
+                            process.stdin.unpipe();
+                        } else if (data.opt === 'Exit') {
+                            process.exit();
+                        }
+                    });
+                }
+            } else {
+                if (!paused) {
+                    term.write(data);
+                } else {
+                    /*if (data[0] === 'c'.charCodeAt(0)) {
+                        paused = false;
+                    } else if (data[0] === 'q'.charCodeAt(0)) {
+                        process.exit();                        
+                    }*/
+                }
+            }
+        });
     });
 }
 
