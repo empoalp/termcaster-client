@@ -1,6 +1,6 @@
 {
   "name": "termcaster",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
   "main": "test.js",
   "scripts": {
@@ -19,6 +19,7 @@
     "pty.js": "~0.2.3",
     "ws": "~0.4.31",
     "request": "~2.34.0",
-    "getent": "~0.1.1"
+    "getent": "~0.1.1",
+    "inquirer": "^0.4.1"
   }
 }
